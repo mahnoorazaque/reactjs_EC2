@@ -1,0 +1,63 @@
+name: Deploy React + Node.js App to AWS EC2
+
+on:
+  push:
+    branches:
+      - main  
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Install Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # Install & build the frontend (React)
+      - name: Install & Build Frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
+          mkdir -p ../backend/public
+          mv dist ../backend/public  # Move built frontend to backend
+
+      # Install backend dependencies
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          npm install
+
+      # Decode SSH Key & Set Up Connection
+      - name: Decode SSH Key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" | base64 --decode > ec2-key.pem
+          chmod 600 ec2-key.pem
+
+      # Deploy to EC2
+      - name: Deploy to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: | 
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST 
+          scp -i ec2-key.pem -r backend $EC2_USER@$EC2_HOST:/home/$EC2_USER/react-app
+          ssh -i ec2-key.pem $EC2_USER@$EC2_HOST << 'EOF'
+            cd /home/$EC2_USER/react-app
+            npm install
+            sudo npm install -g pm2
+            pm2 restart all || pm2 start server.js --name react-backend
+            pm2 save
+          EOF
+
+      # Cleanup the SSH key
+      - name: Cleanup SSH Key
+        run: rm -f ec2-key.pem
