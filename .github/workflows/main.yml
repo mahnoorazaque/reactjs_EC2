@@ -51,8 +51,9 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_HOST 
           scp -i ec2-key.pem -r backend $EC2_USER@$EC2_HOST:/home/$EC2_USER/react-app
           ssh -i ec2-key.pem $EC2_USER@$EC2_HOST << 'EOF'
-            cd /home/$EC2_USER/react-app/backend
+            cd /home/$EC2_USER/react-app
             npm install
+            sudo npm install -g pm2
             pm2 restart all || pm2 start server.js --name react-backend
             pm2 save
           EOF
