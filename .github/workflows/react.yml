@@ -44,7 +44,10 @@ jobs:
             # Restart backend server with PM2
             sudo npm install -g pm2
             pm2 restart all || pm2 start server.js --name react-backend
-            pm2 restart frontend-app || pm2 start "npx serve -s frontend/dist -l 3000" --name frontend-app
+            pm2 stop frontend || true
+            pm2 delete frontend || true
+
+            pm2 start "npm run dev -- --host=0.0.0.0 --port=3000" --name frontend --time
 
             pm2 save
             pm2 list
