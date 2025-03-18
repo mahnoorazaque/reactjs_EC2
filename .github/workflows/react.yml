@@ -28,14 +28,19 @@ jobs:
 
           ssh -i ec2-key.pem $EC2_USER@$EC2_HOST << 'EOF'
             # Navigate to frontend & build React app
+            sudo apt update && sudo apt install -y build-essential sqlite3
             cd /home/ubuntu/react-app/frontend
             npm install
             npm run build
             mv dist ../backend/public  # Move build files to backend/public
 
             # Navigate to backend & install dependencies
-            cd /home/ubuntu/react-app/backend
+            cd /home/ubuntu/react-app/backend || exit 1
+
+            # Remove old dependencies and install fresh ones
+            rm -rf node_modules package-lock.json
             npm install
+            npm rebuild sqlite3 --build-from-source
 
             # Restart backend server with PM2
             sudo npm install -g pm2
