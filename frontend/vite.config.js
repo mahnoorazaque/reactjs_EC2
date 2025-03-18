@@ -7,8 +7,5 @@ export default defineConfig({
     host: '0.0.0.0', // Bind to IPv4 only
     port: 3000,
     strictPort: true, // Ensures it uses port 3000
-    hmr: {
-      clientPort: 3000, // Prevents potential IPv6 HMR issues
-    },
   }
 });

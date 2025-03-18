@@ -17,15 +17,6 @@ logs
 logs/
 backend/logs/
 
-# Build files
-frontend/dist/
-backend/public/
-
-# SQLite database files
-backend/db/*.sqlite
-
-
-
 
 # GitHub workflow temp files
 .github/*.log
