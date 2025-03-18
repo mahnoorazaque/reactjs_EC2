@@ -28,13 +28,13 @@ jobs:
 
           ssh -i ec2-key.pem $EC2_USER@$EC2_HOST << 'EOF'
             # Navigate to frontend & build React app
-            cd /home/$EC2_USER/react-app/frontend
+            cd /home/ubuntu/react-app/frontend
             npm install
             npm run build
             mv dist ../backend/public  # Move build files to backend/public
 
             # Navigate to backend & install dependencies
-            cd /home/$EC2_USER/react-app/backend
+            cd /home/ubuntu/react-app/backend
             npm install
 
             # Restart backend server with PM2
