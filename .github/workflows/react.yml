@@ -1,3 +1,4 @@
+name: Reactjs App Deployment
 on:
   push:
     branches:
@@ -30,7 +31,7 @@ jobs:
             cd /home/ubuntu/react-app/frontend
             npm install
             npm run build
-            mv dist ../backend/public  # Move build files to backend/public
+            sudo mv dist ../backend/public  # Move build files to backend/public
 
             # Navigate to backend & install dependencies
             cd /home/ubuntu/react-app/backend || exit 1
