@@ -39,8 +39,8 @@ jobs:
       # Decode SSH Key & Set Up Connection
       - name: Decode SSH Key
         run: |
-          echo "$EC2_SSH_KEY_BASE64" | base64 --decode > ec2-key.pem
-          chmod 400 ec2-key.pem
+          echo "$EC2_SSH_KEY" | base64 --decode > ec2-key.pem
+          chmod 600 ec2-key.pem
 
       # Deploy to EC2
       - name: Deploy to EC2
